@@ -22,6 +22,8 @@ Route::get('products', 'App\Http\Controllers\API\ProductController@all');
 Route::get('categories', 'App\Http\Controllers\API\ProductCategoryController@all');
 
 
-Route::get('register', 'App\Http\Controllers\API\UserController@register');
+Route::post('register', 'App\Http\Controllers\API\UserController@register');
+Route::post('login', 'App\Http\Controllers\API\UserController@login');
+
 
 

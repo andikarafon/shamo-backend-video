@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\API;
 
+use Exception;
+use App\Models\User;
+use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
-use APP\Models\User;
-use Exception;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Rules\Password;
 
 class UserController extends Controller
 {
+
     public function register(Request $request) 
     {
         try {
@@ -47,4 +49,47 @@ class UserController extends Controller
             ], 'Authentication Failed', 500); 
         }
     }
+
+    public function login(Request $request)
+    {
+        try {
+            $request->validate([
+                    'email' => 'email|required',
+                    'password' => 'required'
+            ]);
+
+            // simpan credentialnya
+            $credentials = request(['email', 'password']);
+            if(!Auth::attemp($credentials)) {
+                return ResponseFormatter::error([
+                    'message' => 'Unauthorized'
+                ], 'Authentication Failed', 500);
+            }
+
+            // jika berhasil maka ambil data usernya
+            $user = User::where('email', $request->email)->first();
+
+            // pengecekan password
+            if(! Hash::check($request->password, $user->password, [])) {
+                throw new \Exception('Invalid Credentials');
+            }
+
+            // jika berhasil
+            $tokenResult = $user->createToken('authToken')->plainTextToken;
+
+            return ResponseFormatter::success([
+                'access_token' => $tokenResult,
+                'token_type' => 'Bearer',
+                'user' => $user
+            ], 'Authenticated');
+
+
+        } catch (Exception $error) {
+            return ResponseFormatter::error([
+                'message' => 'Something went wrong',
+                'error' => $error
+            ], 'Authentication Failed', 500);
+        }
+    }
+
 }
