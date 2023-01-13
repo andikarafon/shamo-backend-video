@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
 
 Route::get('products', 'App\Http\Controllers\API\ProductController@all');
 Route::get('categories', 'App\Http\Controllers\API\ProductCategoryController@all');
@@ -24,6 +22,12 @@ Route::get('categories', 'App\Http\Controllers\API\ProductCategoryController@all
 
 Route::post('register', 'App\Http\Controllers\API\UserController@register');
 Route::post('login', 'App\Http\Controllers\API\UserController@login');
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('user', 'App\Http\Controllers\API\UserController@fetch');
+    Route::post('user', 'App\Http\Controllers\API\UserController@updateProfile');
+    Route::post('logout', 'App\Http\Controllers\API\UserController@logout');
+});
 
 
 

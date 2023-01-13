@@ -97,4 +97,34 @@ class UserController extends Controller
         }
     }
 
+    public function fetch(Request $request)
+    {
+        // mengambil data profile user
+        return ResponseFormatter::success($request->user(), 'Data profile user berhasil diambil');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        // mengambil  data request
+        $data = $request->all();
+
+        // data user yang login
+        $user = Auth::user();
+
+        // update profile
+        $user->update($data);
+        // error update, biarkan saja, karena extensionnya ga membaca update
+
+        return ResponseFormatter::success($user, 'Profile Updated');
+    }
+
+    public function logout(Request $request)
+    {
+        // revoke token
+        $token = $request->user()->currentAccessToken()->delete();
+
+        
+        return ResponseFormatter::success($token, 'Token Revoked');
+    }
+
 }
