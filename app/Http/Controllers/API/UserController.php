@@ -17,13 +17,15 @@ class UserController extends Controller
     public function register(Request $request) 
     {
         try {
+
             $request->validate([
-                    'name' => ['required', 'string', 'max:255'],
-                    'username' => ['required', 'string', 'max:255', 'unique:users'],
-                    'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                    'phone' => ['nullable', 'string', 'max:255'],
-                    'password' => ['required', 'string', new Password],
+                    'name' => ['required','string','max:255'],
+                    'username' => ['required','string','max:255','unique:users'],
+                    'email' => ['required','string','email','max:255','unique:users'],
+                    'phone' => ['nullable','string','max:255'],
+                    'password' => ['required','string', new Password]
             ]);
+
 
             User::create([
                 'name' => $request->name,
@@ -33,7 +35,9 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
+
             $user = User::where('email', $request->email)->first();
+
 
             $tokenResult = $user->createToken('authToken')->plainTextToken;
 
@@ -44,7 +48,7 @@ class UserController extends Controller
             ], 'User Registered');
         } catch (Exception $error) {
             return ResponseFormatter::error([
-                'message' => 'Something went wrong',
+                'message' => 'Something Went Wrong',
                 'error' => $error
             ], 'Authentication Failed', 500); 
         }
@@ -53,6 +57,7 @@ class UserController extends Controller
     public function login(Request $request)
     {
         try {
+
             $request->validate([
                     'email' => 'email|required',
                     'password' => 'required'
@@ -60,7 +65,7 @@ class UserController extends Controller
 
             // simpan credentialnya
             $credentials = request(['email', 'password']);
-            if(!Auth::attemp($credentials)) {
+            if(!Auth::attempt($credentials)) {
                 return ResponseFormatter::error([
                     'message' => 'Unauthorized'
                 ], 'Authentication Failed', 500);
