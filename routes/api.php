@@ -27,6 +27,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', 'App\Http\Controllers\API\UserController@fetch');
     Route::post('user', 'App\Http\Controllers\API\UserController@updateProfile');
     Route::post('logout', 'App\Http\Controllers\API\UserController@logout');
+
+    Route::get('transaction', 'app\Http\Controllers\API\TransactionController@all');
+
+
 });
 
 
